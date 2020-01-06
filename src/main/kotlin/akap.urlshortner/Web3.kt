@@ -1,6 +1,5 @@
 package akap.urlshortner
 
-import kotlinext.js.JsObject
 import kotlin.browser.window
 import kotlin.js.Promise
 
@@ -36,13 +35,15 @@ object Web3 {
     }
 
     fun getAccounts(): Promise<Array<String>> {
-        val res: Promise<Array<String>> = this.web3Obj.eth.getAccounts()
-        return res
+        return web3Obj.eth.getAccounts()
     }
 
     fun getNetworkId(): Promise<Int> {
-        val id: Promise<Int> = this.web3Obj.eth.net.getId()
-        return id
+        return web3Obj.eth.net.getId()
+    }
+
+    fun enable(): Promise<Array<String>> {
+        return provider.enable()
     }
 
 }
