@@ -13,33 +13,29 @@ import kotlin.browser.window
 val coroutineAppScope = MainScope()
 
 // TODO: Make Base Redirect URL configurable, this doesn't have to be the same web host
-const val redirectBase = "http://localhost:8088/"
+const val redirectBase = "http://localhost:8088"
 
 object EmptyElement : ReactElement {
     override val props = object : RProps {}
 }
 
-
-fun RBuilder.web3Alert() = if (!Web3.isSupported()) {
+fun RBuilder.web3Alert() = div {
     div("alert alert-warning") {
         +"No Web3 or Ethereum provider was detected in your browser. In order to connect to this site, please download one of the following plugins"
     }
-    div ("row"){
-        div("w-25 p-3") {
+    div("row") {
+        div("missing-web3 w-25 p-3") {
             a(href = "https://metamask.io") {
-                img(classes = "img-fluid", src = "img/metamask-logo.png" ) {}
+                img(classes = "img-fluid", src = "img/metamask-logo.png") {}
             }
         }
 
-        div("w-25 p-3") {
+        div("missing-web3 w-25 p-3") {
             a(href = "https://www.meetdapper.com") {
-                img(classes = "img-fluid", src = "img/dapper-logo.png" ) {}
+                img(classes = "img-fluid", src = "img/dapper-logo.png") {}
             }
         }
     }
-
-} else {
-    EmptyElement
 }
 
 interface LinkProp : RProps {
@@ -47,27 +43,32 @@ interface LinkProp : RProps {
 }
 
 class App : RComponent<RProps, RState>() {
-
     override fun RBuilder.render() {
-        hashRouter {
-            switch {
-                route("/", URLShortnerForm::class, exact = true)
-                route("/mylinks", MyLinksView::class, exact = true)
-                route<LinkProp>("/r/:linkId") { props ->
-                    div {
-                        if (props.match.params.linkId != undefined) {
+        if (Web3.isSupported()) {
+            hashRouter {
+                switch {
+                    route("/", URLShortnerForm::class, exact = true)
+                    route<LinkProp>("/:linkId") { props ->
+                        if (props.match.params.linkId == "mylinks") {
+                            child(MyLinksView::class) {}
+                        } else if (props.match.params.linkId != undefined) {
                             coroutineAppScope.launch {
                                 AKAPContract.create()
+
                                 val longURL = getURLFromLabel(props.match.params.linkId)
-                                window.location.assign(longURL)
+
+                                if (longURL != undefined)
+                                    window.location.assign(longURL)
                             }
+                            div { +"Redirecting.." }
                         } else {
-                            document.write("No link was found for the given Id.")
+                            div { +"No link was found for the given Id." }
                         }
                     }
-                    web3Alert()
                 }
             }
+        } else {
+            web3Alert()
         }
     }
 }
