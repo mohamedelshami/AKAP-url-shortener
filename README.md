@@ -30,5 +30,5 @@ Start webpack dev server with gradle run task:
 
 Start your browser at:
 
-    $ http://localbost:8088/
+    $ http://localhost:8088/
 
