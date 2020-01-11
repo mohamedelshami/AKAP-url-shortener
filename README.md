@@ -1,6 +1,6 @@
 ## URL Shortner - based on AKAP protocol, Ethereum blockchain and Kotlin JS
 
-This an URL Shortner which showcase the [AKAP](akap.me) protocol on Ethereum blockchain
+This an URL Shortner which showcase the [AKAP](https://akap.me) protocol on Ethereum blockchain
 
 ## Install
 
@@ -20,7 +20,9 @@ Download and Install [MetaMask](https://www.metamask.io) browser plugin to inter
 
 Start Ganache develop network, and deploy AKAP.sol from AKAP [contracts](https://github.com/cfelde/AKAP/tree/master/contracts) directory:
 
-    $ truffle migrate --network develop 
+    $ truffle migrate --network development 
+
+Make sure to update address as required within `src/main/web/contracts/AKAP.json`
 
 Start webpack dev server with gradle run task:
 
@@ -28,5 +30,5 @@ Start webpack dev server with gradle run task:
 
 Start your browser at:
 
-    $ http://localbost:8808/
+    $ http://localbost:8088/
 

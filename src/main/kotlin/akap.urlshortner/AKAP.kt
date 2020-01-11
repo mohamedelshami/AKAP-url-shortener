@@ -39,26 +39,27 @@ suspend fun createShortLink(longURL: String, fromAccount: String, checkOwner: Bo
         console.log("Response: " + response)
     }
 
-    console.log("Link $linkLabel  created for $longURL")
+    console.log("Link $linkLabel created for $longURL")
 
     return linkLabel
 }
 
-suspend fun getURLFromLabel(label: String): String {
+suspend fun getURLFromLabel(label: String): String? {
     val labelBytes = stringToBytes(label)
     val nodeHash = AKAPContract.hashOf(0, labelBytes).asDeferred().await()
     AKAPContract.ownerOf(nodeHash).then {
         console.log("Retrieving a link for $label - created by $it")
     }
-   return getNodeBody(nodeHash)
+    return getNodeBody(nodeHash)
 }
 
-suspend fun getNodeBody(nodeId: JsObject): String {
-    val data = AKAPContract.nodeBody(nodeId).asDeferred().await() ?: "0x00"
+suspend fun getNodeBody(nodeId: JsObject): String? {
+    val data = AKAPContract.nodeBody(nodeId).asDeferred().await()
     return hexToString(data)
 }
 
-fun hexToString(hex: String): String {
+fun hexToString(hex: String): String? {
+    if (hex == undefined) return null;
     return Web3js.utils.hexToString(hex)
 }
 
@@ -128,8 +129,8 @@ object AKAPContract {
         return response as Promise<String>
     }
 
-    fun getPastEvents(eventName: String, selectedAccount: String?=null): Promise<dynamic> {
-        val options =  js("{filter:{sender:''},fromBlock: 0, toBlock: 'latest'}")
+    fun getPastEvents(eventName: String, selectedAccount: String? = null): Promise<dynamic> {
+        val options = js("{filter:{sender:''},fromBlock: 0, toBlock: 'latest'}")
         selectedAccount.let {
             options.sender = selectedAccount
         }

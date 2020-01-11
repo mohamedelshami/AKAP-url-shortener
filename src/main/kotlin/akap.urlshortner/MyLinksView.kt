@@ -27,14 +27,14 @@ class MyLinksView : RComponent<RProps, MyLinksViewState>() {
     override fun RBuilder.render() {
         if (!state.myLinks.isNullOrEmpty()) {
             table("table table-dark") {
-                th (classes = "thead-dark") {
+                th(classes = "thead-dark") {
                     +"Short Label"
                 }
-                th (classes = "thead-dark") {
+                th(classes = "thead-dark") {
                     +"Link"
                 }
                 state.myLinks.forEach {
-                    val labelTxt = "akap.me/" + it["label"]
+                    val labelTxt = "$redirectBase#" + it["label"]
                     val lnk: String = "" + it["url"]
                     tr {
                         td {
@@ -48,18 +48,17 @@ class MyLinksView : RComponent<RProps, MyLinksViewState>() {
             }
         } else if (Web3.isSupported()) {
             div(classes = "spinner-grow text-primary") {}
-            p{+"Retrieving recent links.."}
+            p { +"Retrieving recent links.." }
         }
-        web3Alert()
     }
 
     private fun getRecentLinks() {
         coroutineAppScope.launch {
             val events: Array<dynamic> = AKAPContract.getPastEvents("Claim", state.selectedAccount).asDeferred().await() as Array<dynamic>
-            val res: List<Map<String, Any>> = events.filter{ event -> event.returnValues.claimCase == 1 }.map { event ->
+            val res: List<Map<String, Any>> = events.filter { event -> event.returnValues.claimCase == 1 }.map { event ->
                 val url = getNodeBody(event.returnValues.nodeId)
                 val nodeLabel = hexToString(event.returnValues.label)
-                mapOf("blockNumber" to event.blockNumber,"sender" to event.returnValues.sender, "nodeId" to event.returnValues.nodeId, "label" to nodeLabel, "url" to url )
+                mapOf("blockNumber" to event.blockNumber, "sender" to event.returnValues.sender, "nodeId" to event.returnValues.nodeId, "label" to nodeLabel, "url" to url)
             }.sortedByDescending { event -> event["blockNumber"] as Int }
 
             setState {

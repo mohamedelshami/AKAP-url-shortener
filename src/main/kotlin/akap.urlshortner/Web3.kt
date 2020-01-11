@@ -31,7 +31,7 @@ object Web3 {
     }
 
     fun isSupported(): Boolean {
-       return web3Obj != null && provider != null
+        return web3Obj != null && provider != null
     }
 
     fun getAccounts(): Promise<Array<String>> {

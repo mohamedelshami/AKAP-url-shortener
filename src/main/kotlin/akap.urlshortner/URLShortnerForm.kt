@@ -23,9 +23,8 @@ fun RBuilder.showLink(label: String) = if (label.isNotEmpty()) {
     div("form-group row") {
         attrs.jsStyle["padding-left"] = "1em"
         div("alert alert-primary") {
-            val txt = "Here is your short link $redirectBase$label. "
-            +txt
-            a(href = "$redirectBase/#/r/$label", classes= "alert-link") { +"Check it out" }
+            +"Here is your short link: "
+            a(href = "$redirectBase#$label", classes = "alert-link") { +"$redirectBase#$label" }
         }
     }
 } else {
@@ -53,11 +52,11 @@ class URLShortnerForm : RComponent<RProps, URLShortnerFormState>() {
     }
 
     override fun RBuilder.render() {
-        div ("bg-light p-2 rounded"){
-            h2("AKAP URL Shortner"){
+        div("bg-light p-2 rounded") {
+            h2("AKAP URL Shortner") {
                 +"AKAP URL Shortner"
             }
-            p("lead"){
+            p("lead") {
                 +"Enter or paste your link, then click get short link to generate a short link."
             }
 
@@ -87,7 +86,6 @@ class URLShortnerForm : RComponent<RProps, URLShortnerFormState>() {
                 }
             }
             showLink(state.urlShortLabel)
-            web3Alert()
         }
     }
 
@@ -99,7 +97,7 @@ class URLShortnerForm : RComponent<RProps, URLShortnerFormState>() {
         }
     }
 
-    private fun onGetShortLinkClick(event: Event){
+    private fun onGetShortLinkClick(event: Event) {
         event.preventDefault()
         val urlInput = document.getElementById("urlInput") as HTMLInputElement
         if (urlInput.checkValidity()) {
