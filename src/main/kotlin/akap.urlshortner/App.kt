@@ -47,11 +47,36 @@ class App : RComponent<RProps, RState>() {
         if (Web3.isSupported()) {
             hashRouter {
                 switch {
-                    route("/", URLShortnerForm::class, exact = true)
+                    route<LinkProp>("/", exact = true) {
+                        div {
+                            child(NavigationView::class) {
+                                attrs.items = listOf(
+                                        NavigationItem("Home", "#", true),
+                                        NavigationItem("My Links", "#mylinks"),
+                                        NavigationItem("About", "https://github.com/mohamedelshami/AKAP-url-shortener")
+                                )
+                            }
+                            div("container") {
+                                child(URLShortnerForm::class) {}
+                            }
+                        }
+                    }
                     route<LinkProp>("/:linkId") { props ->
                         if (props.match.params.linkId == "mylinks") {
-                            child(MyLinksView::class) {}
-                        } else if (props.match.params.linkId != undefined) {
+                            div {
+                                child(NavigationView::class) {
+                                    attrs.items = listOf(
+                                            NavigationItem("Home", "#"),
+                                            NavigationItem("My Links", "#mylinks", true),
+                                            NavigationItem("About", "https://github.com/mohamedelshami/AKAP-url-shortener")
+                                    )
+                                }
+                                div("container") {
+                                    child(MyLinksView::class) {}
+                                }
+                            }
+                        }
+                        else if (props.match.params.linkId != undefined) {
                             coroutineAppScope.launch {
                                 AKAPContract.create()
 
@@ -60,9 +85,23 @@ class App : RComponent<RProps, RState>() {
                                 if (longURL != undefined)
                                     window.location.assign(longURL)
                             }
-                            div { +"Redirecting.." }
-                        } else {
-                            div { +"No link was found for the given Id." }
+                            div("container") {
+                                div { +"Redirecting.." }
+                            }
+                        }
+                        else {
+                            div {
+                                child(NavigationView::class) {
+                                    attrs.items = listOf(
+                                            NavigationItem("Home", "#"),
+                                            NavigationItem("My Links", "#mylinks"),
+                                            NavigationItem("About", "https://github.com/mohamedelshami/AKAP-url-shortener")
+                                    )
+                                }
+                                div("container") {
+                                    div { +"No link was found for the given Id." }
+                                }
+                            }
                         }
                     }
                 }

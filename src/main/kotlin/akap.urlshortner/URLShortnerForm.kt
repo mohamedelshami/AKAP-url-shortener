@@ -57,7 +57,7 @@ class URLShortnerForm : RComponent<RProps, URLShortnerFormState>() {
                 +"AKAP URL Shortner"
             }
             p("lead") {
-                +"Enter or paste your link, then click get short link to generate a short link."
+                +"Enter or paste your link, then click 'Get Short Link' to generate an Ethereum managed short link."
             }
 
         }

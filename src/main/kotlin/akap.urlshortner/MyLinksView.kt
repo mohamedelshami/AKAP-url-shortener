@@ -5,9 +5,11 @@ import kotlinx.coroutines.launch
 import react.*
 import react.dom.*
 
+data class LinkDetails(val blockNumber: Int, val sender: String, val nodeId: String, val label: String, val url: String)
+
 interface MyLinksViewState : RState {
-    var myLinks: List<Map<String, Any>>
-    var selectedAccount: String
+    var myLinks: List<LinkDetails>?
+    var selectedAccount: String?
 }
 
 class MyLinksView : RComponent<RProps, MyLinksViewState>() {
@@ -25,7 +27,7 @@ class MyLinksView : RComponent<RProps, MyLinksViewState>() {
     }
 
     override fun RBuilder.render() {
-        if (!state.myLinks.isNullOrEmpty()) {
+        if (state.myLinks?.isNotEmpty() == true) {
             table("table table-dark") {
                 th(classes = "thead-dark") {
                     +"Short Label"
@@ -33,15 +35,22 @@ class MyLinksView : RComponent<RProps, MyLinksViewState>() {
                 th(classes = "thead-dark") {
                     +"Link"
                 }
-                state.myLinks.forEach {
-                    val labelTxt = "$redirectBase#" + it["label"]
-                    val lnk: String = "" + it["url"]
+                th(classes = "thead-dark") {
+                    +"Node ID"
+                }
+                state.myLinks?.forEach {
+                    val labelTxt = "$redirectBase#" + it.label
+                    val url = it.url
+                    val nodeId = it.nodeId
                     tr {
                         td {
                             +labelTxt
                         }
                         td {
-                            a(href = "$lnk", classes = "alert-link") { +lnk }
+                            a(href = "$url", classes = "alert-link") { +url }
+                        }
+                        td {
+                            a(href = "https://akap.me/browser/$nodeId") { +(nodeId.substring(0, 8) + "..") }
                         }
                     }
                 }
@@ -55,11 +64,18 @@ class MyLinksView : RComponent<RProps, MyLinksViewState>() {
     private fun getRecentLinks() {
         coroutineAppScope.launch {
             val events: Array<dynamic> = AKAPContract.getPastEvents("Claim", state.selectedAccount).asDeferred().await() as Array<dynamic>
-            val res: List<Map<String, Any>> = events.filter { event -> event.returnValues.claimCase == 1 }.map { event ->
-                val url = getNodeBody(event.returnValues.nodeId)
+            val res: List<LinkDetails> = events.filter { event -> event.returnValues.claimCase == 1 }.mapNotNull { event ->
+                val blockNumber = event.blockNumber as Int
+                val sender = event.returnValues.sender as String
+                val nodeId = Web3js.utils.toHex(event.returnValues.nodeId) as String
                 val nodeLabel = hexToString(event.returnValues.label)
-                mapOf("blockNumber" to event.blockNumber, "sender" to event.returnValues.sender, "nodeId" to event.returnValues.nodeId, "label" to nodeLabel, "url" to url)
-            }.sortedByDescending { event -> event["blockNumber"] as Int }
+                val url = getNodeBody(event.returnValues.nodeId)
+
+                if (nodeLabel != null && url != null)
+                    LinkDetails(blockNumber, sender, nodeId, nodeLabel, url)
+                else
+                    null
+            }.sortedByDescending { it.blockNumber }
 
             setState {
                 myLinks = res
