@@ -8,8 +8,8 @@ import react.dom.*
 data class LinkDetails(val blockNumber: Int, val sender: String, val nodeId: String, val label: String, val url: String)
 
 interface MyLinksViewState : RState {
-    var myLinks: List<LinkDetails>
-    var selectedAccount: String
+    var myLinks: List<LinkDetails>?
+    var selectedAccount: String?
 }
 
 class MyLinksView : RComponent<RProps, MyLinksViewState>() {
@@ -27,7 +27,7 @@ class MyLinksView : RComponent<RProps, MyLinksViewState>() {
     }
 
     override fun RBuilder.render() {
-        if (!state.myLinks.isNullOrEmpty()) {
+        if (state.myLinks?.isNotEmpty() == true) {
             table("table table-dark") {
                 th(classes = "thead-dark") {
                     +"Short Label"
@@ -38,7 +38,7 @@ class MyLinksView : RComponent<RProps, MyLinksViewState>() {
                 th(classes = "thead-dark") {
                     +"Node ID"
                 }
-                state.myLinks.forEach {
+                state.myLinks?.forEach {
                     val labelTxt = "$redirectBase#" + it.label
                     val url = it.url
                     val nodeId = it.nodeId
