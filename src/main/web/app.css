@@ -1,5 +1,47 @@
+html {
+    height: 100%;
+}
+
 body {
-    min-height: 75rem;
+    height: 100%;
+}
+
+#root {
+    height: 100%;
+    min-height: 100%;
+    position: relative;
+}
+
+#ui {
+    min-height: 100%;
+    position: relative;
+}
+
+#footer-clearance {
+    padding-bottom: 100px;
+}
+
+#footer {
+    position: absolute;
+    bottom: 0;
+    height: 30px;
+    width: 100%;
+    padding-top: 5px;
+    background-color: #343a40;
+    color: white;
+    font-size: 0.7rem;
+    text-align: center;
+    overflow: auto;
+}
+
+table a, table a:active, table a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+#footer a, #footer a:active, #footer a:hover {
+    color: white;
+    text-decoration: underline;
 }
 
 .missing-web3 {
