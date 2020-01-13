@@ -1,6 +1,6 @@
-## URL Shortner - based on AKAP protocol, Ethereum blockchain and Kotlin JS
+# URL Shortener - based on AKA protocol, Ethereum blockchain and Kotlin JS
 
-This an URL Shortner which showcase the [AKAP](https://akap.me) protocol on Ethereum blockchain
+This is a URL Shortener which showcase the [AKA protocol](https://akap.me) on the Ethereum blockchain.
 
 ## Install
 
@@ -12,9 +12,9 @@ are included in the project repo.
 
 All dependencies are configured in gradle project. 
 
-Download and Install [Truffle Ganache](https://www.trufflesuite.com/ganache) to start a local Ethereum node.
+Download and install [Truffle Ganache](https://www.trufflesuite.com/ganache) to start a local Ethereum node.
 
-Download and Install [MetaMask](https://www.metamask.io) browser plugin to interact with the Etheruem blockchain from the app.
+Download and install [MetaMask](https://www.metamask.io) browser plugin to interact with the Etheruem blockchain from the app.
 
 ## Try
 

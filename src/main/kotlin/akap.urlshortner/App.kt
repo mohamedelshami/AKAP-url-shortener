@@ -2,6 +2,7 @@ package akap.urlshortner
 
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.html.id
 import react.*
 import react.dom.*
 import react.router.dom.hashRouter
@@ -44,70 +45,90 @@ interface LinkProp : RProps {
 
 class App : RComponent<RProps, RState>() {
     override fun RBuilder.render() {
-        if (Web3.isSupported()) {
-            hashRouter {
-                switch {
-                    route<LinkProp>("/", exact = true) {
-                        div {
-                            child(NavigationView::class) {
-                                attrs.items = listOf(
-                                        NavigationItem("Home", "#", true),
-                                        NavigationItem("My Links", "#mylinks"),
-                                        NavigationItem("About", "https://github.com/mohamedelshami/AKAP-url-shortener")
-                                )
-                            }
-                            div("container") {
-                                child(URLShortnerForm::class) {}
-                            }
-                        }
-                    }
-                    route<LinkProp>("/:linkId") { props ->
-                        if (props.match.params.linkId == "mylinks") {
+        div {
+            attrs {
+                id = "ui"
+            }
+
+            if (Web3.isSupported()) {
+                hashRouter {
+                    switch {
+                        route<LinkProp>("/", exact = true) {
                             div {
                                 child(NavigationView::class) {
                                     attrs.items = listOf(
-                                            NavigationItem("Home", "#"),
-                                            NavigationItem("My Links", "#mylinks", true),
-                                            NavigationItem("About", "https://github.com/mohamedelshami/AKAP-url-shortener")
-                                    )
-                                }
-                                div("container") {
-                                    child(MyLinksView::class) {}
-                                }
-                            }
-                        }
-                        else if (props.match.params.linkId != undefined) {
-                            coroutineAppScope.launch {
-                                AKAPContract.create()
-
-                                val longURL = getURLFromLabel(props.match.params.linkId)
-
-                                if (longURL != undefined)
-                                    window.location.assign(longURL)
-                            }
-                            div("container") {
-                                div { +"Redirecting.." }
-                            }
-                        }
-                        else {
-                            div {
-                                child(NavigationView::class) {
-                                    attrs.items = listOf(
-                                            NavigationItem("Home", "#"),
+                                            NavigationItem("Home", "#", true),
                                             NavigationItem("My Links", "#mylinks"),
                                             NavigationItem("About", "https://github.com/mohamedelshami/AKAP-url-shortener")
                                     )
                                 }
                                 div("container") {
-                                    div { +"No link was found for the given Id." }
+                                    child(URLShortnerForm::class) {}
+                                }
+                            }
+                        }
+                        route<LinkProp>("/:linkId") { props ->
+                            if (props.match.params.linkId == "mylinks") {
+                                div {
+                                    child(NavigationView::class) {
+                                        attrs.items = listOf(
+                                                NavigationItem("Home", "#"),
+                                                NavigationItem("My Links", "#mylinks", true),
+                                                NavigationItem("About", "https://github.com/mohamedelshami/AKAP-url-shortener")
+                                        )
+                                    }
+                                    div("container") {
+                                        child(MyLinksView::class) {}
+                                    }
+                                }
+                            } else if (props.match.params.linkId != undefined) {
+                                coroutineAppScope.launch {
+                                    AKAPContract.create()
+
+                                    val longURL = getURLFromLabel(props.match.params.linkId)
+
+                                    if (longURL != undefined)
+                                        window.location.assign(longURL)
+                                }
+                                div("container") {
+                                    div { +"Redirecting.." }
+                                }
+                            } else {
+                                div {
+                                    child(NavigationView::class) {
+                                        attrs.items = listOf(
+                                                NavigationItem("Home", "#"),
+                                                NavigationItem("My Links", "#mylinks"),
+                                                NavigationItem("About", "https://github.com/mohamedelshami/AKAP-url-shortener")
+                                        )
+                                    }
+                                    div("container") {
+                                        div { +"No link was found for the given Id." }
+                                    }
                                 }
                             }
                         }
                     }
                 }
+            } else {
+                web3Alert()
             }
-        } else {
-            web3Alert()
+
+            div {
+                attrs {
+                    id = "footer-clearance"
+                }
+            }
+
+            div {
+                attrs {
+                    id = "footer"
+                }
+
+                +"This is open source software, leveraging the "
+                a(href = "https://akap.me") { +"AKA protocol"}
+                + " on the Ethereum blockchain. Copyright 2020, all rights reserved."
+            }
         }
     }
 }
