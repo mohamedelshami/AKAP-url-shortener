@@ -32,9 +32,8 @@ suspend fun createShortLink(longURL: String, fromAccount: String, checkOwner: Bo
     if (checkOwner && fromAccount == AKAPContract.ownerOf(hash).asDeferred().await()) {
         console.warn("Account ${fromAccount} is already an owner.")
     } else {
-        val response = AKAPContract.claim(0, labelBytes, fromAccount).then {
+        val response = URLShortenerContract.claimAndSetNodeBody(labelBytes, urlBytes, fromAccount).then {
             console.log("Successfully created node $hash")
-            AKAPContract.setNodeBody(hash, urlBytes, fromAccount)
         }.asDeferred().await()
         console.log("Response: " + response)
     }
@@ -142,3 +141,31 @@ object AKAPContract {
     }
 }
 
+object URLShortenerContract {
+    private var tfc: dynamic = null
+
+    fun get(): URLShortenerContract {
+        return tfc
+    }
+
+    init {
+        coroutineAppScope.launch {
+            create()
+        }
+    }
+
+    suspend fun create() {
+        val json = fetchContract("URLShortener.json").asDeferred().await()
+        tfc = truffleContract(json)
+        tfc.setProvider(Web3.get().currentProvider)
+        console.log("Created URLShortener contract " + tfc)
+    }
+
+    fun claimAndSetNodeBody(label: ByteArray, body: ByteArray, fromAccount: String): Promise<Json> {
+        val params = js("{from: '' }")
+        params.from = fromAccount
+        return tfc.deployed().then { instance ->
+            instance.contract.methods.claimAndSetNodeBody(label, body).send(params)
+        } as Promise<Json>
+    }
+}

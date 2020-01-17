@@ -45,6 +45,7 @@ kotlinFrontend {
     }
 
     npm {
+        dependency "style-loader"
         dependency "react"
         dependency "react-dom"
         dependency "react-router-dom"
@@ -70,4 +71,3 @@ compileTestKotlin2Js {
 //    kotlinOptions.moduleName = project.name + "-test"
     kotlinOptions.main = "call"
 }
-

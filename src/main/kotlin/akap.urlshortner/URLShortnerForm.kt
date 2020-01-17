@@ -8,6 +8,7 @@ import kotlinx.html.id
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.UnionElementOrRadioNodeList
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
@@ -47,6 +48,7 @@ class URLShortnerForm : RComponent<RProps, URLShortnerFormState>() {
                 selectedAccount = accounts[0]
             }
             AKAPContract.create()
+            URLShortenerContract.create()
             console.log("Selected Account " + state.selectedAccount)
         }
     }
