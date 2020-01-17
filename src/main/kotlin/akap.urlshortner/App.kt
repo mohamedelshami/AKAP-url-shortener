@@ -84,6 +84,7 @@ class App : RComponent<RProps, RState>() {
                             } else if (props.match.params.linkId != undefined) {
                                 coroutineAppScope.launch {
                                     AKAPContract.create()
+                                    URLShortenerContract.create()
 
                                     val longURL = getURLFromLabel(props.match.params.linkId)
 

@@ -45,7 +45,8 @@ suspend fun createShortLink(longURL: String, fromAccount: String, checkOwner: Bo
 
 suspend fun getURLFromLabel(label: String): String? {
     val labelBytes = stringToBytes(label)
-    val nodeHash = AKAPContract.hashOf(0, labelBytes).asDeferred().await()
+    val parentNodeId = URLShortenerContract.parentNodeId().asDeferred().await()
+    val nodeHash = AKAPContract.hashOf(parentNodeId, labelBytes).asDeferred().await()
     AKAPContract.ownerOf(nodeHash).then {
         console.log("Retrieving a link for $label - created by $it")
     }
@@ -167,5 +168,11 @@ object URLShortenerContract {
         return tfc.deployed().then { instance ->
             instance.contract.methods.claimAndSetNodeBody(label, body).send(params)
         } as Promise<Json>
+    }
+
+    fun parentNodeId(): Promise<Int> {
+        return tfc.deployed().then { instance ->
+            instance.contract.methods.parentNodeId().call()
+        } as Promise<Int>
     }
 }
