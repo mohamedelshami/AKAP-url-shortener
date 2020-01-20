@@ -42,8 +42,8 @@ class URLShortnerForm : RComponent<RProps, URLShortnerFormState>() {
     override fun componentDidMount() {
         /* This is async block - but it should be safe to initialise here as componentDidMount blocks JS single thread */
         coroutineAppScope.launch {
-            val accounts = Web3.enable().asDeferred().await()
-            //val accounts = Web3.getAccounts().asDeferred().await()
+            Web3.enable().asDeferred().await()
+            val accounts = Web3.getAccounts().asDeferred().await()
             setState {
                 selectedAccount = accounts[0]
             }

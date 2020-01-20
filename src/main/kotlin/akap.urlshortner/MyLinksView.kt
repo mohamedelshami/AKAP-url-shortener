@@ -17,7 +17,8 @@ class MyLinksView : RComponent<RProps, MyLinksViewState>() {
     override fun componentDidMount() {
         /* This is async block - but it should be safe to initialise here as componentDidMount blocks JS single thread */
         coroutineAppScope.launch {
-            val accounts = Web3.enable().asDeferred().await()
+            Web3.enable().asDeferred().await()
+            val accounts = Web3.getAccounts().asDeferred().await()
             setState {
                 selectedAccount = accounts[0]
             }
@@ -63,8 +64,11 @@ class MyLinksView : RComponent<RProps, MyLinksViewState>() {
 
     private fun getRecentLinks() {
         coroutineAppScope.launch {
-            val events: Array<dynamic> = AKAPContract.getPastEvents("Claim", state.selectedAccount).asDeferred().await() as Array<dynamic>
-            val res: List<LinkDetails> = events.filter { event -> event.returnValues.claimCase == 1 }.mapNotNull { event ->
+            val transfers: Array<dynamic> = AKAPContract.getPastEvents("Transfer" ).asDeferred().await() as Array<dynamic>
+            val events: Array<dynamic> = AKAPContract.getPastEvents("Claim" ).asDeferred().await() as Array<dynamic>
+            val txs = transfers.filter {  it.returnValues.to == state.selectedAccount }.map { it.transactionHash }.toSet()
+
+            val res: List<LinkDetails> = events.filter { event -> txs.contains( event.transactionHash ) }.mapNotNull { event ->
                 val blockNumber = event.blockNumber as Int
                 val sender = event.returnValues.sender as String
                 val nodeId = Web3js.utils.toHex(event.returnValues.nodeId) as String
