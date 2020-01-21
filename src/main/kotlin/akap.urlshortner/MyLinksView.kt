@@ -22,6 +22,7 @@ class MyLinksView : RComponent<RProps, MyLinksViewState>() {
             setState {
                 selectedAccount = accounts[0]
             }
+            URLShortenerContract.create()
             AKAPContract.create()
             getRecentLinks()
         }
@@ -67,8 +68,9 @@ class MyLinksView : RComponent<RProps, MyLinksViewState>() {
             val transfers: Array<dynamic> = AKAPContract.getPastEvents("Transfer" ).asDeferred().await() as Array<dynamic>
             val events: Array<dynamic> = AKAPContract.getPastEvents("Claim" ).asDeferred().await() as Array<dynamic>
             val txs = transfers.filter {  it.returnValues.to == state.selectedAccount }.map { it.transactionHash }.toSet()
+            val parentNodeId = URLShortenerContract.parentNodeId().asDeferred().await()
 
-            val res: List<LinkDetails> = events.filter { event -> txs.contains( event.transactionHash ) }.mapNotNull { event ->
+            val res: List<LinkDetails> = events.filter { event -> txs.contains( event.transactionHash ) && parentNodeId == event.returnValues.parentId }.mapNotNull { event ->
                 val blockNumber = event.blockNumber as Int
                 val sender = event.returnValues.sender as String
                 val nodeId = Web3js.utils.toHex(event.returnValues.nodeId) as String
