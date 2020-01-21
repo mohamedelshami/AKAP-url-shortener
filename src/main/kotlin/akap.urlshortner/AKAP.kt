@@ -77,7 +77,7 @@ object AKAPContract {
     }
 
     suspend fun create() {
-        val json = fetchContract("AKAP.json").asDeferred().await()
+        val json = fetchContract("IAKAP.json").asDeferred().await()
         tfc = truffleContract(json)
         tfc.setProvider(Web3.get().currentProvider)
         console.log("Created AKAP contract " + tfc)

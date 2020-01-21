@@ -56,7 +56,7 @@ class URLShortnerForm : RComponent<RProps, URLShortnerFormState>() {
     override fun RBuilder.render() {
         div("bg-light p-2 rounded") {
             h2("AKAP URL Shortner") {
-                +"AKAP URL Shortner"
+                +"Redir.eth"
             }
             p("lead") {
                 +"Enter or paste your link, then click 'Get Short Link' to generate an Ethereum managed short link."

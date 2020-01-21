@@ -48,6 +48,6 @@ object Web3 {
 
 }
 
-fun fetchContract(cf: String): Promise<Promise<Any?>> = window.fetch("/contracts/$cf").then {
+fun fetchContract(cf: String): Promise<Promise<Any?>> = window.fetch("contracts/$cf").then {
     it.json()
 }
