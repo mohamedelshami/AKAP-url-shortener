@@ -18,7 +18,9 @@ Download and install [MetaMask](https://www.metamask.io) browser plugin to inter
 
 ## Try
 
-Start Ganache develop network, and deploy AKAP.sol from AKAP [contracts](https://github.com/cfelde/AKAP/tree/master/contracts) directory:
+Start Ganache development network
+
+Deploy AKAP [contract](https://github.com/cfelde/AKAP/tree/master/contracts) and URLShortener [contract](https://github.com/mohamedelshami/AKAP-url-shortener-contracts):
 
     $ truffle migrate --network development 
 
@@ -32,3 +34,6 @@ Start your browser at:
 
     $ http://localhost:8088/
 
+## See it Live
+
+https://redir.eth
