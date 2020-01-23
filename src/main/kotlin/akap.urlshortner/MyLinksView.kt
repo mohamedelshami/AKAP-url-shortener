@@ -9,6 +9,7 @@ data class LinkDetails(val blockNumber: Int, val sender: String, val nodeId: Str
 
 interface MyLinksViewState : RState {
     var myLinks: List<LinkDetails>?
+    var loaded: Boolean?
     var selectedAccount: String?
 }
 
@@ -57,9 +58,11 @@ class MyLinksView : RComponent<RProps, MyLinksViewState>() {
                     }
                 }
             }
-        } else if (Web3.isSupported()) {
+        } else if (Web3.isSupported() && state.loaded != true) {
             div(classes = "spinner-grow text-primary") {}
             p { +"Retrieving recent links.." }
+        } else if (Web3.isSupported() && state.loaded == true) {
+            p { +"No links found on your account.." }
         }
     }
 
@@ -85,6 +88,7 @@ class MyLinksView : RComponent<RProps, MyLinksViewState>() {
 
             setState {
                 myLinks = res
+                loaded = true
             }
         }
     }

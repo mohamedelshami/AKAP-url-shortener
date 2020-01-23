@@ -48,7 +48,6 @@ class NavigationView(props: NavigationProps) : RComponent<NavigationProps, Navig
                                 li ("nav-item") {
                                     a(classes = "nav-link", href="${it.link}") {
                                         +it.label
-                                        span("sr-only") { +"(current)" }
                                     }
                                 }
                             }
