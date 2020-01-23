@@ -8,7 +8,6 @@ import kotlinx.html.id
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.UnionElementOrRadioNodeList
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
@@ -18,6 +17,7 @@ interface URLShortnerFormState : RState {
     var longURL: String
     var urlShortLabel: String
     var selectedAccount: String
+    var buttonActive: Boolean
 }
 
 fun RBuilder.showLink(label: String) = if (label.isNotEmpty()) {
@@ -37,6 +37,7 @@ class URLShortnerForm : RComponent<RProps, URLShortnerFormState>() {
     override fun URLShortnerFormState.init() {
         urlShortLabel = ""
         longURL = ""
+        buttonActive = true
     }
 
     override fun componentDidMount() {
@@ -84,7 +85,12 @@ class URLShortnerForm : RComponent<RProps, URLShortnerFormState>() {
                     +"Get Short Link"
                     attrs {
                         onClickFunction = ::onGetShortLinkClick
+                        disabled = !state.buttonActive
                     }
+                }
+
+                if (!state.buttonActive) {
+                    div(classes = "spinner-grow text-primary") {}
                 }
             }
             showLink(state.urlShortLabel)
@@ -103,10 +109,15 @@ class URLShortnerForm : RComponent<RProps, URLShortnerFormState>() {
         event.preventDefault()
         val urlInput = document.getElementById("urlInput") as HTMLInputElement
         if (urlInput.checkValidity()) {
+            setState {
+                buttonActive = false
+            }
+
             coroutineAppScope.launch {
                 val label = createShortLink(state.longURL, state.selectedAccount)
                 setState {
                     urlShortLabel = label
+                    buttonActive = true
                 }
             }
         }
